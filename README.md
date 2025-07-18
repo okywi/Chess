@@ -3,7 +3,7 @@ Written in Java using the libgdx game development library.
 
 [<img src="./chess.png" width="650" />](./chess.png)
 
-# Features:
+## Features:
 - [x] Legal/illegal move detection
 - [x] Show legal moves when piece is clicked
 - [x] Win detection
