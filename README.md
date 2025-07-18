@@ -1,7 +1,7 @@
 # Very simple chess game.
 Written in Java using the libgdx game development library.
 
-![chess](chess.png)
+[<img src="./chess.png" width="650" />](./chess.png)
 
 # Features:
 - [x] Legal/illegal move detection
