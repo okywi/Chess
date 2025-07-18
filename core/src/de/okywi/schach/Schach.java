@@ -1,22 +1,17 @@
 package de.okywi.schach;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static de.okywi.schach.Piece.checkedPlayer;
 import static de.okywi.schach.Piece.checkmate;
@@ -26,8 +21,10 @@ public class Schach extends ApplicationAdapter {
 	OrthographicCamera camera;
 	SpriteBatch batch;
 	ShapeRenderer shape;
-	ShapeRenderer moveShape;
 	BitmapFont font;
+	FreeTypeFontGenerator fontGenerator;
+	GlyphLayout layout;
+
 	// Game variables
 	Color boardWhite = new Color(0xEBECD0FF);
 	Color boardBlack = new Color(0x739552FF);
@@ -53,10 +50,16 @@ public class Schach extends ApplicationAdapter {
 		camera.update();
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
-		moveShape = new ShapeRenderer();
-		moveShape.setAutoShapeType(true);
-		font = new BitmapFont(true);
-		font.getData().setScale(4);
+
+		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("quicksand.ttf"));
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = 48;
+		parameter.color = Color.BLACK;
+		parameter.flip = true;
+		parameter.borderWidth = 3;
+		font = fontGenerator.generateFont(parameter);
+		layout = new GlyphLayout();
+
 		createPieces();
 	}
 
@@ -65,17 +68,12 @@ public class Schach extends ApplicationAdapter {
 		ScreenUtils.clear(1, 1, 1, 1);
 		batch.setProjectionMatrix(camera.combined);
 		shape.setProjectionMatrix(camera.combined);
-		moveShape.setProjectionMatrix(camera.combined);
 		camera.update();
 
 
 		shape.begin(ShapeRenderer.ShapeType.Filled);
 		drawBoard(boardWhite, boardBlack);
 		shape.end();
-
-		moveShape.begin();
-
-		moveShape.end();
 
 		batch.begin();
 		handlePieces();
@@ -95,9 +93,9 @@ public class Schach extends ApplicationAdapter {
 		for (int i = 0; i < BOARD_SIZE/TILE_SIZE; i++) {
 			for (int j = 0; j < 8; j++) {
 				if ((j + i) % 2 == 0) {
-					shape.setColor(black);
-				} else {
 					shape.setColor(white);
+				} else {
+					shape.setColor(black);
 				}
 				shape.rect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
@@ -110,7 +108,6 @@ public class Schach extends ApplicationAdapter {
 				}
 			}
 		}
-
 	}
 
 	public void drawPieces() {
@@ -138,11 +135,16 @@ public class Schach extends ApplicationAdapter {
 			}
 		}
 		if (checkmate) {
-			if (currentPlayer.equals("b")) {
-				font.draw(batch, "Player White won.", 200, 400);
-			} else {
-				font.draw(batch, "Player Black won.", 200, 400);
-			}
+			int x =  Gdx.graphics.getWidth() / 2;
+			int y = Gdx.graphics.getHeight() / 2;
+            String text;
+            if (currentPlayer.equals("b")) {
+                text = "Player White won.";
+            } else {
+                text = "Player Black won.";
+            }
+            layout.setText(font, text);
+            font.draw(batch, text, x - layout.width / 2, y - layout.height / 2);
 		}
 	}
 
