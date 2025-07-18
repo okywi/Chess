@@ -5,7 +5,9 @@ Written in Java using the libgdx game development library.
 
 # Features:
 - [x] Legal/illegal move detection
+- [x] Show legal moves when piece is clicked
 - [x] Win detection
+
 
 ## Run with:
 **Important: You need to use Java 17**
